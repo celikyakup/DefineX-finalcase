@@ -115,7 +115,7 @@ http://localhost:8080/v3/api-docs
 ```
 ### 6. Open Jacoco
 ```
-http://localhost:63342/advancedTaskManagement/target/site/jacoco/index.html
+http://localhost:63342/advanced-task-management/target/site/jacoco/index.html
 ```
 ---
 ## 🔐 Admin Login Information
