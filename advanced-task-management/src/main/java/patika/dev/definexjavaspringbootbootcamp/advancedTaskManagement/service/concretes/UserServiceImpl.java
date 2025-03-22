@@ -25,6 +25,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
+    @CacheEvict(value = "users", allEntries = true)
     @Override
     public UserInfoResponse saveUser(UserInfoRequest userInfoRequest) throws MethodArgumentNotValidException {
         Optional<User> isUserExist=this.userRepository. findByEmail(userInfoRequest.getEmail());

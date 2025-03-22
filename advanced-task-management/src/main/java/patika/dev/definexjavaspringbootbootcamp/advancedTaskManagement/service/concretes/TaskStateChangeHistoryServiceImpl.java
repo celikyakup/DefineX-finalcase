@@ -1,6 +1,7 @@
 package patika.dev.definexjavaspringbootbootcamp.advancedTaskManagement.service.concretes;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import patika.dev.definexjavaspringbootbootcamp.advancedTaskManagement.core.enums.TaskStatus;
@@ -23,6 +24,7 @@ public class TaskStateChangeHistoryServiceImpl implements TaskStateChangeHistory
     private final TaskRepository taskRepository;
     private final TaskStateChangeHistoryMapper historyMapper;
 
+    @CacheEvict(value = "taskChangeHistories", allEntries = true)
     @Override
     public void recordStateChange(Task task, TaskStatus oldState, TaskStatus newState, String reason) {
         TaskStateChangeHistory history=new TaskStateChangeHistory();

@@ -1,6 +1,7 @@
 package patika.dev.definexjavaspringbootbootcamp.advancedTaskManagement.service.concretes;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import patika.dev.definexjavaspringbootbootcamp.advancedTaskManagement.core.enums.ProjectStatus;
@@ -23,6 +24,7 @@ public class ProjectStateChangeHistoryServiceImpl implements ProjectStateChangeH
     private final ProjectRepository projectRepository;
     private final ProjectStateChangeHistoryMapper projectStateChangeHistoryMapper;
 
+    @CacheEvict(value = "projectStateHistories", allEntries = true)
     @Override
     public void recordStateChange(Project project, ProjectStatus oldState, ProjectStatus newState, String reason) {
         ProjectStateChangeHistory projectStateChangeHistory=new ProjectStateChangeHistory();

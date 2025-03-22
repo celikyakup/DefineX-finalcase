@@ -89,31 +89,25 @@ This project is a task management system developed with Java Spring Boot. Comple
 
 ## 🔥 Setup Steps
 
-### 1. Cloning repo
-```bash
-git clone https://github.com/senin-kullanicin/advanced-task-manager.git
-cd advanced-task-manager
-```
-
-### 2. Start redis with Docker
+### 1. Start redis with Docker
 ```base
 docker-compose up -d
 ```
-### 3. Compile and start project
+### 2. Compile and start project
 ```bash
 mvn clean install
 mvn spring-boot:run
 ```
-### 4. Open Swagger UI
+### 3. Open Swagger UI
 ```
 http://localhost:8080/swagger-ui.html
 ```
 
-### 5. API Document
+### 4. API Document
 ```
 http://localhost:8080/v3/api-docs
 ```
-### 6. Open Jacoco
+### 5. Open Jacoco
 ```
 http://localhost:63342/advanced-task-management/target/site/jacoco/index.html
 ```
@@ -128,7 +122,6 @@ password : admin
 ## 📊 UML Diagram
 
 > ![img.png](img.png)
-
 
 ---
 

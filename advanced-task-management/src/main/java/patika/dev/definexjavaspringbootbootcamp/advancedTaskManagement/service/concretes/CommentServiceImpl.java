@@ -28,6 +28,7 @@ public class CommentServiceImpl implements CommentService {
     private final TaskRepository taskRepository;
     private final TaskMapper taskMapper;
 
+    @CacheEvict(value = "comments", allEntries = true)
     @Override
     public CommentResponse addCommentToTask(Long taskId, CommentRequest commentRequest) throws NotFoundException {
         Task task=this.taskRepository.findById(taskId).orElseThrow(()->new NotFoundException("Task not found with id:" + taskId));

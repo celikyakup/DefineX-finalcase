@@ -27,6 +27,7 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectMapper projectMapper;
     private final ProjectStateChangeHistoryService projectHistoryService;
 
+    @CacheEvict(value = "projects", allEntries = true)
     @Override
     public ProjectResponse saveProject(ProjectRequest projectRequest) throws MethodArgumentNotValidException {
         Optional<Project> isProjectExist = this.projectRepository.findByTitleAndDescriptionAndDepartment(projectRequest.getTitle(), projectRequest.getDescription(), projectRequest.getDepartment());

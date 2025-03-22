@@ -34,6 +34,7 @@ public class TaskServiceImpl implements TaskService {
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
 
+    @CacheEvict(value = "tasks", allEntries = true)
     @Override
     public TaskResponse saveTask(TaskRequest taskRequest) throws MethodArgumentNotValidException {
         Optional<Task> isTaskExist=this.taskRepository.findByTitleAndDescriptionAndReasonAndUserStoryAndAcceptCriteria(taskRequest.getTitle(),taskRequest.getDescription(),taskRequest.getReason(),taskRequest.getUserStory(),taskRequest.getAcceptCriteria());

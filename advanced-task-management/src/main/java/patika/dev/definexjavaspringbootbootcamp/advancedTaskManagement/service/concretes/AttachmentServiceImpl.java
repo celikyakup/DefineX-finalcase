@@ -31,6 +31,8 @@ public class AttachmentServiceImpl implements AttachmentService {
     private final AttachmentMapper attachmentMapper;
 
     private final String uploadPath = "src/main/resources/static/attachments";
+
+    @CacheEvict(value = "attachments", allEntries = true)
     @Override
     public AttachmentResponse uploadFileToTask(Long taskId, MultipartFile file) throws NotFoundException {
         Task task=taskRepository.findById(taskId).orElseThrow(()->new NotFoundException("Task not found with id:" + taskId));
