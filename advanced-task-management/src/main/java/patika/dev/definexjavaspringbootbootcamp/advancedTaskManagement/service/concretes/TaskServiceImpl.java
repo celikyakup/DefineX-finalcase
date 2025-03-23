@@ -3,6 +3,7 @@ package patika.dev.definexjavaspringbootbootcamp.advancedTaskManagement.service.
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import patika.dev.definexjavaspringbootbootcamp.advancedTaskManagement.dto.request.TaskPatchRequest;
 import patika.dev.definexjavaspringbootbootcamp.advancedTaskManagement.dto.request.TaskRequest;
@@ -48,7 +49,10 @@ public class TaskServiceImpl implements TaskService {
         return this.taskMapper.asOutput(task);
     }
 
-    @CacheEvict(value = "tasks", key = "#id")
+    @Caching(evict = {
+           @CacheEvict(value = "tasks", key = "#id"),
+            @CacheEvict(value = "tasks", allEntries = true)
+    })
     @Override
     public TaskResponse updateTask(Long id, TaskUpdateRequest taskUpdateRequest) throws NotFoundException,MethodArgumentNotValidException {
         Optional<Task> taskFromDb= this.taskRepository.findById(id);
@@ -99,7 +103,10 @@ public class TaskServiceImpl implements TaskService {
         return this.taskMapper.asOutput(this.taskRepository.findByProjectId(project.getId()));
     }
 
-    @CacheEvict(value = "tasks", key = "#id")
+    @Caching(evict = {
+            @CacheEvict(value = "tasks", key = "#id"),
+            @CacheEvict(value = "tasks", allEntries = true)
+    })
     @Override
     public void delete(Long id) throws NotFoundException {
         Optional<Task> taskFromDb=this.taskRepository.findById(id);
@@ -116,6 +123,14 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskResponse patchStatus(Long id, TaskPatchRequest taskPatchRequest) throws NotFoundException {
         Task taskFromDb=this.taskRepository.findById(id).orElseThrow(()->new NotFoundException("The task not found with it:" + id));
+        if (taskFromDb.getStatus().equals(TaskStatus.COMPLETED)){
+            throw new MethodArgumentNotValidException("This task completed so no action can be taken!");
+        }
+        if (taskPatchRequest.getStatus().equals(TaskStatus.BLOCKED) || taskPatchRequest.getStatus().equals(TaskStatus.CANCELLED)){
+            if (taskPatchRequest.getReason() == null || taskPatchRequest.getReason().trim().isEmpty()){
+                throw new MethodArgumentNotValidException("Reason must be entered!");
+            }
+        }
         this.historyService.recordStateChange(taskFromDb,taskFromDb.getStatus(),taskPatchRequest.getStatus(),taskPatchRequest.getReason());
         this.taskMapper.update(taskFromDb,taskPatchRequest);
         return this.taskMapper.asOutput(this.taskRepository.save(taskFromDb));

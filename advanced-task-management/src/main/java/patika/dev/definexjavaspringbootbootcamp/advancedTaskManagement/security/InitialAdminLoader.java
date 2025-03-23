@@ -24,7 +24,6 @@ public class InitialAdminLoader implements CommandLineRunner {
             admin.setPassword(passwordEncoder.encode("admin"));
             admin.setRole(UserRole.PROJECT_MANAGER);
             userRepository.save(admin);
-            System.out.println("kayıt oldu");
         }
     }
 }

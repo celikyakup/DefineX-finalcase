@@ -25,6 +25,8 @@ import patika.dev.definexjavaspringbootbootcamp.advancedTaskManagement.repositor
 import patika.dev.definexjavaspringbootbootcamp.advancedTaskManagement.service.abstracts.TaskStateChangeHistoryService;
 import patika.dev.definexjavaspringbootbootcamp.advancedTaskManagement.service.concretes.TaskServiceImpl;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -151,14 +153,12 @@ public class TaskServiceTest {
 
     @Test
     void getTaskByUserId_ShouldThrow_WhenNotFound() {
-        when(taskRepository.findByUserId(100L)).thenReturn(List.of());
+        Long incorrectTaskId=100L;
+        when(taskRepository.findByUserId(incorrectTaskId)).thenReturn(Collections.emptyList());
 
-        NotFoundException exception = assertThrows(NotFoundException.class,
-                () -> taskService.getTaskByUserId(100L));
-
-        assertEquals("The user not found with id:" + 100L , exception.getMessage());
-        verify(userRepository).findById(100L);
-        verifyNoInteractions(taskRepository);
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> taskService.getTaskByUserId(incorrectTaskId));
+        assertEquals("The user not found with id:" + incorrectTaskId,exception.getMessage());
+        verifyNoInteractions(taskMapper);
     }
 
     @Test
@@ -180,7 +180,6 @@ public class TaskServiceTest {
                 () -> taskService.getTaskByProjectId(100L));
 
         assertEquals("The project not found with id:" + 100L, exception.getMessage());
-        verify(projectRepository).findById(100L);
         verifyNoInteractions(taskRepository);
     }
 

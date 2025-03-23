@@ -3,6 +3,7 @@ package patika.dev.definexjavaspringbootbootcamp.advancedTaskManagement.service.
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import patika.dev.definexjavaspringbootbootcamp.advancedTaskManagement.core.enums.ProjectStatus;
 import patika.dev.definexjavaspringbootbootcamp.advancedTaskManagement.dto.request.ProjectRequest;
@@ -38,7 +39,10 @@ public class ProjectServiceImpl implements ProjectService {
         return this.projectMapper.asOutput(project);
     }
 
-    @CacheEvict(value = "projects", key = "#id")
+    @Caching(evict = {
+            @CacheEvict(value = "projects", key = "#id"),
+            @CacheEvict(value = "projects", allEntries = true)
+    })
     @Override
     public ProjectResponse updateProject(Long id, ProjectUpdateRequest projectUpdateRequest) throws NotFoundException,MethodArgumentNotValidException {
         Optional<Project> projectFromDb= this.projectRepository.findById(id);
@@ -71,7 +75,10 @@ public class ProjectServiceImpl implements ProjectService {
         return this.projectMapper.asOutput(this.projectRepository.findAll());
     }
 
-    @CacheEvict(value = "projects", key = "#id")
+    @Caching(evict = {
+            @CacheEvict(value = "projects", key = "#id"),
+            @CacheEvict(value = "projects", allEntries = true)
+    })
     @Override
     public void delete(Long id) throws NotFoundException {
         Optional<Project> projectFromDb=this.projectRepository.findById(id);

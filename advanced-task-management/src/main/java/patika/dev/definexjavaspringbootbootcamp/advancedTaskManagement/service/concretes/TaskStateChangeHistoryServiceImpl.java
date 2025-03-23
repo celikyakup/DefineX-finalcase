@@ -3,6 +3,7 @@ package patika.dev.definexjavaspringbootbootcamp.advancedTaskManagement.service.
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import patika.dev.definexjavaspringbootbootcamp.advancedTaskManagement.core.enums.TaskStatus;
 import patika.dev.definexjavaspringbootbootcamp.advancedTaskManagement.dto.response.TaskStateChangeHistoryResponse;
@@ -24,7 +25,10 @@ public class TaskStateChangeHistoryServiceImpl implements TaskStateChangeHistory
     private final TaskRepository taskRepository;
     private final TaskStateChangeHistoryMapper historyMapper;
 
-    @CacheEvict(value = "taskChangeHistories", allEntries = true)
+    @Caching(evict = {
+            @CacheEvict (value = "taskChangeHistories", allEntries = true),
+            @CacheEvict(value = "taskChangeHistories",key = "#task.id")
+        })
     @Override
     public void recordStateChange(Task task, TaskStatus oldState, TaskStatus newState, String reason) {
         TaskStateChangeHistory history=new TaskStateChangeHistory();
@@ -35,7 +39,7 @@ public class TaskStateChangeHistoryServiceImpl implements TaskStateChangeHistory
         this.historyRepository.save(history);
     }
 
-    @Cacheable(value = "taskChangeHistories", key ="#taskId" )
+    @Cacheable (value = "taskChangeHistories", key ="#taskId")
     @Override
     public List<TaskStateChangeHistoryResponse> getHistoryByTaskId(Long taskId) throws NotFoundException {
         Optional<Task> task= this.taskRepository.findById(taskId);

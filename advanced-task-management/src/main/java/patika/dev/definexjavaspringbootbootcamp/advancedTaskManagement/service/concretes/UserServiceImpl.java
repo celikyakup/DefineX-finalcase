@@ -3,6 +3,7 @@ package patika.dev.definexjavaspringbootbootcamp.advancedTaskManagement.service.
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import patika.dev.definexjavaspringbootbootcamp.advancedTaskManagement.dto.request.UserInfoRequest;
@@ -37,7 +38,10 @@ public class UserServiceImpl implements UserService {
         return this.userMapper.asOutput(user);
     }
 
-    @CacheEvict(value = "users", key = "#id")
+    @Caching(evict = {
+            @CacheEvict(value = "users", key = "#id"),
+            @CacheEvict(value = "users", allEntries = true)
+    })
     @Override
     public UserInfoResponse updateUser(Long id, UserInfoRequest userInfoRequest) throws NotFoundException {
         Optional<User> userFromDb=this.userRepository.findById(id);
@@ -62,7 +66,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @CacheEvict(value = "users", key = "#id")
+    @Caching(evict = {
+            @CacheEvict(value = "users", key = "#id"),
+            @CacheEvict(value = "users", allEntries = true)
+    })
     public void delete(Long id) throws NotFoundException {
         Optional<User> userFromDb=this.userRepository.findById(id);
         if (userFromDb.isEmpty()){

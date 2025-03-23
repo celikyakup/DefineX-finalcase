@@ -3,6 +3,7 @@ package patika.dev.definexjavaspringbootbootcamp.advancedTaskManagement.service.
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import patika.dev.definexjavaspringbootbootcamp.advancedTaskManagement.dto.request.CommentRequest;
 import patika.dev.definexjavaspringbootbootcamp.advancedTaskManagement.dto.response.CommentResponse;
@@ -48,7 +49,10 @@ public class CommentServiceImpl implements CommentService {
                 .collect(Collectors.toList());
     }
 
-    @CacheEvict(value = "comments", key = "#commentId")
+    @Caching(evict = {
+            @CacheEvict(value = "comments", key = "#commentId"),
+            @CacheEvict(value = "comments", allEntries = true)
+    })
     @Override
     public void deleteComment(Long commentId) throws NotFoundException {
         Comment comment=this.commentRepository.findById(commentId).orElseThrow(()->new NotFoundException("Comment not found with id:" + commentId));
