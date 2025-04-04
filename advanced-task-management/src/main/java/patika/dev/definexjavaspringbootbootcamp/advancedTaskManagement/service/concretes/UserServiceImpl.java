@@ -12,6 +12,7 @@ import patika.dev.definexjavaspringbootbootcamp.advancedTaskManagement.entity.Us
 import patika.dev.definexjavaspringbootbootcamp.advancedTaskManagement.exception.MethodArgumentNotValidException;
 import patika.dev.definexjavaspringbootbootcamp.advancedTaskManagement.exception.NotFoundException;
 import patika.dev.definexjavaspringbootbootcamp.advancedTaskManagement.mapper.UserMapper;
+import patika.dev.definexjavaspringbootbootcamp.advancedTaskManagement.messaging.RabbitMQSender;
 import patika.dev.definexjavaspringbootbootcamp.advancedTaskManagement.repository.UserRepository;
 import patika.dev.definexjavaspringbootbootcamp.advancedTaskManagement.service.abstracts.UserService;
 
@@ -25,8 +26,12 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final RabbitMQSender rabbitMQSender;
 
-    @CacheEvict(value = "users", allEntries = true)
+    @Caching(evict = {
+            @CacheEvict(value = "users", allEntries = true),
+            @CacheEvict(value = "users",key = "all")
+    })
     @Override
     public UserInfoResponse saveUser(UserInfoRequest userInfoRequest) throws MethodArgumentNotValidException {
         Optional<User> isUserExist=this.userRepository. findByEmail(userInfoRequest.getEmail());
@@ -35,6 +40,7 @@ public class UserServiceImpl implements UserService {
         }
         userInfoRequest.setPassword(passwordEncoder.encode(userInfoRequest.getPassword()));
         User user=userRepository.save(userMapper.asEntity(userInfoRequest));
+        rabbitMQSender.sendCacheInvalidate("users::all");
         return this.userMapper.asOutput(user);
     }
 

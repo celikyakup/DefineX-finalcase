@@ -84,6 +84,7 @@ This project is a task management system developed with Java Spring Boot. Comple
 - **Docker** for Redis
 - **SwaggerUI**
 - **Jacoco**
+- **RabbitMQ**
 
 ---
 

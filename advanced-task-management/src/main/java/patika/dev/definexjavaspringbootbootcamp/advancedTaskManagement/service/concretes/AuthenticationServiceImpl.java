@@ -1,6 +1,7 @@
 package patika.dev.definexjavaspringbootbootcamp.advancedTaskManagement.service.concretes;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,6 +28,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
 
+    @CacheEvict(value = "users", allEntries = true)
     @Override
     public UserResponse save(UserInfoRequest userInfoRequest) throws MethodArgumentNotValidException{
         User user=new User();
